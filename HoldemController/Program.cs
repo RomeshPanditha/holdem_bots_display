@@ -9,6 +9,8 @@ namespace HoldemController
 {
     class Program
     {
+        private DisplayManager _display;
+
         private ServerHoldemPlayer[] _players;
         private readonly Deck _deck = new Deck();
         private readonly PotManager _potMan = new PotManager();
@@ -63,8 +65,8 @@ namespace HoldemController
             _bigBlindPlayerNum = GetNextActivePlayer(_littleBlindPlayerNum);
 
 
-            var display = new DisplayManager(_width, _height, 6);
-            display.DrawTable();
+            _display = new DisplayManager(_width, _height, _players);
+            _display.DrawTable();
 
             while (!bDone)
             {
@@ -330,6 +332,10 @@ namespace HoldemController
                 Logger.Log("{0}\t{1}\t{2}\t{3}\t{4}", i, _players[i].Name, _players[i].IsAlive, _players[i].StackSize, i == _dealerPlayerNum);
                 var pInfo = new PlayerInfo(i, _players[i].Name.PadRight(20), _players[i].IsAlive, _players[i].StackSize, i == _dealerPlayerNum, _players[i].IsObserver);
                 playerInfo[i] = pInfo;
+                if (_players[i].IsActive)
+                {
+                    _display.UpdatePlayer(_players[i]);
+                }
             }
 
             Logger.Log("---------------");
@@ -524,6 +530,11 @@ namespace HoldemController
                     }
 
                     BroadcastAction(stage, currBettor, playersAction, playersBetAmount);
+
+                    if (_players[currBettor].IsActive)
+                    {
+                        _display.UpdatePlayer(_players[currBettor]);
+                    }
                 }
 
                 // if this player is last to act or only one active player left then bDone = true
