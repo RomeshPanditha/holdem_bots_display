@@ -12,9 +12,9 @@ namespace SevenTwoBot
         }
 
 
-        public string Name => "Seven Two Bot";
+        public string Name { get { return "Seven Two Bot"; } }
 
-        public bool IsObserver => false;
+        public bool IsObserver { get { return false; } } 
         public void InitHand(int numPlayers, PlayerInfo[] players)
         {
         }

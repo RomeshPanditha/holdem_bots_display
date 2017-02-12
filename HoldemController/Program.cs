@@ -47,7 +47,7 @@ namespace HoldemController
             }
 
             Logger.Close();
-
+            Console.SetCursorPosition(0, 0);
             Console.WriteLine("-- press any key to exit --");
             Console.ReadKey();
         }
@@ -65,12 +65,13 @@ namespace HoldemController
             _bigBlindPlayerNum = GetNextActivePlayer(_littleBlindPlayerNum);
 
 
-            _display = new DisplayManager(_width, _height, _players);
+            _display = new DisplayManager(150, 30, _players);
             _display.DrawTable();
 
             while (!bDone)
             {
                 var board = new Card[5];
+                _display.UpdateCommunityCards(board);
                 int lastToAct;
                 
                 // init round for each player
@@ -88,13 +89,16 @@ namespace HoldemController
                     // deal flop
                     board[0] = _deck.DealCard();
                     BroadcastBoardCard(EBoardCardType.BoardFlop1, board[0]);
+                    _display.UpdateCommunityCards(board);
 
                     board[1] = _deck.DealCard();
                     BroadcastBoardCard(EBoardCardType.BoardFlop2, board[1]);
+                    _display.UpdateCommunityCards(board);
 
                     board[2] = _deck.DealCard();
                     BroadcastBoardCard(EBoardCardType.BoardFlop3, board[2]);
-
+                    _display.UpdateCommunityCards(board);
+                    
                     // Second betting round - get player actions and broadcast to all players until betting round done
                     if (IsBettingRoundRequired())
                     {
@@ -107,6 +111,7 @@ namespace HoldemController
                     // deal turn
                     board[3] = _deck.DealCard();
                     BroadcastBoardCard(EBoardCardType.BoardTurn, board[3]);
+                    _display.UpdateCommunityCards(board);
 
                     // Third betting round - get player actions and broadcast to all players until betting round done
                     if (IsBettingRoundRequired())
@@ -120,6 +125,7 @@ namespace HoldemController
                     // deal river
                     board[4] = _deck.DealCard();
                     BroadcastBoardCard(EBoardCardType.BoardRiver, board[4]);
+                    _display.UpdateCommunityCards(board);
 
                     // Fourth betting round - get player actions and broadcast to all players until betting round done
                     if (IsBettingRoundRequired())
@@ -172,7 +178,6 @@ namespace HoldemController
                     // Move to next dealer 
                     MoveDealerAndBlinds();
                 }
-
 /*
                 ConsoleKeyInfo cki;
                 cki= System.Console.ReadKey();
@@ -408,6 +413,7 @@ namespace HoldemController
                 var hole2 = _deck.DealCard();
                 Logger.Log("Player {0} hole cards {1} {2}", player.PlayerNum, hole1.ValueStr(), hole2.ValueStr());
                 player.ReceiveHoleCards(hole1, hole2);
+                _display.UpdatePlayer(player);
             }
         }
 
@@ -487,7 +493,8 @@ namespace HoldemController
             while (!bDone)
             {
                 // dont call GetAction if player is already all in
-                if (_players[currBettor].StackSize > 0)
+                var player = _players[currBettor];
+                if (player.StackSize > 0)
                 {
                     int callAmount;
                     int minRaise;
@@ -497,13 +504,15 @@ namespace HoldemController
                     // get the players action
                     EActionType playersAction;
                     int playersBetAmount;
-                    _players[currBettor].GetAction(stage, callAmount, minRaise, maxRaise, raisesRemaining, _potMan.Size(), out playersAction, out playersBetAmount);
+                    player.GetAction(stage, callAmount, minRaise, maxRaise, raisesRemaining, _potMan.Size(), out playersAction, out playersBetAmount);
+
+                    _display.UpdatePlayerAction(player.IsAlive, currBettor, playersAction, playersBetAmount);
 
                     // *** DO ACTION ***
                     if (playersAction == EActionType.ActionFold)
                     {
                         // if fold then mark player as inactive
-                        _players[currBettor].IsActive = false;
+                        player.IsActive = false;
                     }
                     else if ((playersAction == EActionType.ActionCall) || (playersAction == EActionType.ActionRaise))
                     {
@@ -531,9 +540,9 @@ namespace HoldemController
 
                     BroadcastAction(stage, currBettor, playersAction, playersBetAmount);
 
-                    if (_players[currBettor].IsActive)
+                    if (player.IsActive)
                     {
-                        _display.UpdatePlayer(_players[currBettor]);
+                        _display.UpdatePlayer(player);
                     }
                 }
 
@@ -789,6 +798,7 @@ namespace HoldemController
 
                     player.IsAlive = false;
                     player.IsActive = false;
+                    _display.UpdatePlayer(player);
                 }
             }
         }
