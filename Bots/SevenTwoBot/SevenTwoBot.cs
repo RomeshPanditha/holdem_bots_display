@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HoldemPlayerContract;
 
 namespace SevenTwoBot
 {
-    public class SevenTwoBot : IHoldemPlayer
+    public class SevenTwoBot : MarshalByRefObject, IHoldemPlayer 
     {
         private Card[] _currentHand = new Card[2];
         public void InitPlayer(int playerNum, Dictionary<string, string> playerConfigSettings)

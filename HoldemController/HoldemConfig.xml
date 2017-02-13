@@ -3,12 +3,12 @@
   <Players>
 		<Player dll="CallerBot.dll" startingStack="5000"/>
 		<Player dll="CallerBot.dll" startingStack="5000"/>
+		<Player dll="SevenTwoBot.dll" startingStack="5000"/>
 		<Player dll="CallerBot.dll" startingStack="5000"/>
 		<Player dll="CallerBot.dll" startingStack="5000"/>
+		<Player dll="RaiserBot.dll" startingStack="5000"/>
 		<Player dll="CallerBot.dll" startingStack="5000"/>
-		<Player dll="CallerBot.dll" startingStack="5000"/>
-		<Player dll="CallerBot.dll" startingStack="5000"/>
-		<Player dll="CallerBot.dll" startingStack="5000"/>
+		<Player dll="RaiserBot.dll" startingStack="5000"/>
 <!--		<Player dll="SevenTwoBot.dll" startingStack="20000"/>-->
 		<Player dll="ObserverBot.dll"/>
 	</Players>

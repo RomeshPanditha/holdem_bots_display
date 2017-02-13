@@ -81,6 +81,27 @@ namespace HoldemController
             DrawLines(BuildCards(cards, startingX, startingY, true));
         }
 
+        internal void UpdatePots(List<Pot> pots)
+        {
+            var x = _width / 2 - 30;
+            var y = _height / 2 - 1;
+            var potDisplay = new List<ConsoleLine>();
+            var potNum = 1;
+            foreach (var pot in pots)
+            {
+                potDisplay.Add(new ConsoleLine(x, y, "Pot " + potNum + ": " + pot.Size(), ConsoleColor.White, ConsoleColor.DarkGreen));
+                potNum++;
+                y++;
+            }
+            for (var i = 0; i < 4 - pots.Count; i++)
+            {
+                potDisplay.Add(new ConsoleLine(x, y, "                ", ConsoleColor.White, ConsoleColor.DarkGreen));
+                potNum++;
+                y++;
+            }
+            DrawLines(potDisplay);
+        }
+
         public void UpdatePlayerAction(bool isAlive, int playerNum, EActionType act, int amount)
         {
             var pos = _playerPositions[playerNum];

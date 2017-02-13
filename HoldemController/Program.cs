@@ -65,7 +65,7 @@ namespace HoldemController
             _bigBlindPlayerNum = GetNextActivePlayer(_littleBlindPlayerNum);
 
 
-            _display = new DisplayManager(150, 30, _players);
+            _display = new DisplayManager(150, 35, _players);
             _display.DrawTable();
 
             while (!bDone)
@@ -83,6 +83,7 @@ namespace HoldemController
 
                 // First betting round - get player actions and broadcast to all players until betting round done
                 DoBettingRound(EStage.StagePreflop, out lastToAct);
+                _display.UpdatePots(_potMan.Pots);
 
                 if (GetNumActivePlayers() > 1)
                 {
@@ -103,6 +104,7 @@ namespace HoldemController
                     if (IsBettingRoundRequired())
                     {
                         DoBettingRound(EStage.StageFlop, out lastToAct);
+                        _display.UpdatePots(_potMan.Pots);
                     }
                 }
 
@@ -117,6 +119,7 @@ namespace HoldemController
                     if (IsBettingRoundRequired())
                     {
                         DoBettingRound(EStage.StageTurn, out lastToAct);
+                        _display.UpdatePots(_potMan.Pots);
                     }
                 }
 
@@ -131,6 +134,7 @@ namespace HoldemController
                     if (IsBettingRoundRequired())
                     {
                         DoBettingRound(EStage.StageRiver, out lastToAct);
+                        _display.UpdatePots(_potMan.Pots);
                     }
                 }
 
@@ -178,11 +182,12 @@ namespace HoldemController
                     // Move to next dealer 
                     MoveDealerAndBlinds();
                 }
-/*
-                ConsoleKeyInfo cki;
-                cki= System.Console.ReadKey();
-                bDone = (cki.Key == ConsoleKey.Escape);
-*/
+                _display.UpdatePots(_potMan.Pots);
+                /*
+                                ConsoleKeyInfo cki;
+                                cki= System.Console.ReadKey();
+                                bDone = (cki.Key == ConsoleKey.Escape);
+                */
             }
 
             EndOfGame();
